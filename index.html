@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>我的花销本</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
+body{max-width:600px;margin:20px auto;padding:20px;background:#f4f7fa}
+.box{background:white;padding:24px;border-radius:12px;box-shadow:0 2px 8px #00000018}
+h2{margin-bottom:16px;color:#222}
+.row{display:flex;gap:10px;margin-bottom:12px}
+input{flex:1;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px}
+button{padding:10px 18px;border:none;border-radius:6px;background:#4078c0;color:white;cursor:pointer}
+#list{margin-top:16px}
+.item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee}
+.total{margin-top:16px;font-weight:bold;color:#e63946}
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>我的每日花销</h2>
+  <div class="row">
+    <input id="date" type="date">
+    <input id="name" placeholder="消费项目，比如奶茶">
+  </div>
+  <div class="row">
+    <input id="money" type="number" placeholder="金额">
+    <button onclick="addItem()">添加记录</button>
+  </div>
+  <div id="list"></div>
+  <div class="total">总支出：<span id="sum">0</span> 元</div>
+</div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("bill")) || [];
+function render(){
+  let list = document.getElementById("list");
+  let sum = 0;
+  list.innerHTML = "";
+  data.forEach((v,i)=>{
+    list.innerHTML += `<div class="item">
+      <span>${v.date}｜${v.name}</span>
+      <span>${v.money} 元 <a style="color:#999;cursor:pointer" onclick="del(${i})">删除</a ></span>
+    </div>`;
+    sum += Number(v.money);
+  })
+  document.getElementById("sum").innerText = sum;
+  localStorage.setItem("bill",JSON.stringify(data));
+}
+function addItem(){
+  let date = document.getElementById("date").value;
+  let name = document.getElementById("name").value;
+  let money = document.getElementById("money").value;
+  if(!date||!name||!money) return alert("填全信息");
+  data.push({date,name,money});
+  render();
+}
+function del(i){
+  data.splice(i,1);
+  render();
+}
+render();
+</script>
+</body>
+</html>
